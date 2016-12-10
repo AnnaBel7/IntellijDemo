@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: p2.osgi.bundle:org.eclipse.equinox.preferences:3.6.1.v20160815-1406">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/p2/osgi/bundle/org.eclipse.equinox.preferences/3.6.1.v20160815-1406/org.eclipse.equinox.preferences-3.6.1.v20160815-1406.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/p2/osgi/bundle/org.eclipse.equinox.preferences/3.6.1.v20160815-1406/org.eclipse.equinox.preferences-3.6.1.v20160815-1406-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/p2/osgi/bundle/org.eclipse.equinox.preferences/3.6.1.v20160815-1406/org.eclipse.equinox.preferences-3.6.1.v20160815-1406-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
