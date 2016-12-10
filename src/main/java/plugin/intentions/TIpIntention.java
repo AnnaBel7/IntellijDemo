@@ -4,7 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -73,12 +73,10 @@ public class TIpIntention implements IntentionAction {
         new WriteCommandAction.Simple(project, psiFile) {
             @Override
             protected void run() throws Throwable {
-                VirtualFile virtualFile = psiFile.getVirtualFile();
-                virtualFile.setBinaryContent(replacement.getBytes());
-                virtualFile.refresh(false, true);
-                psiFile.subtreeChanged();
+                PsiDocumentManager.getInstance(project).getDocument(psiFile).setText(replacement);
             }
         }.execute();
+
     }
 
     @Override
