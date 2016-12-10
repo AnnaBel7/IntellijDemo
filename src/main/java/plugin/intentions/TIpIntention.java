@@ -1,4 +1,5 @@
-import bridge.TipperExecute;
+package plugin.intentions;
+
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -15,11 +16,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.TextEditGroup;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * Created by roei on 12/9/16.
@@ -28,6 +26,7 @@ public class TIpIntention implements IntentionAction {
     Tipper tipper;
     PsiElement psiElement;
     ASTNode astNode;
+
     public TIpIntention(Tipper tipper, PsiElement psiElement, ASTNode astNode) {
         this.tipper = tipper;
         this.psiElement = psiElement;
@@ -63,8 +62,8 @@ public class TIpIntention implements IntentionAction {
             tipperFailure.printStackTrace();
         }
         ASTRewrite r = ASTRewrite.create(astNode.getAST());
-        tip.go(r, (TextEditGroup)null );
-        TextEdit textEdit = r.rewriteAST(jdtDocument, (Map)null);
+        tip.go(r, null);
+        TextEdit textEdit = r.rewriteAST(jdtDocument, null);
         try {
             textEdit.apply(jdtDocument);
         } catch (BadLocationException e) {

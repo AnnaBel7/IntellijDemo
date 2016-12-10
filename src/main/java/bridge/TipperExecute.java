@@ -1,6 +1,5 @@
 package bridge;
 
-import utils.Wrap;
 import il.org.spartan.Wrapper;
 import il.org.spartan.spartanizer.ast.navigate.findFirst;
 import il.org.spartan.spartanizer.ast.safety.az;
@@ -9,31 +8,27 @@ import il.org.spartan.spartanizer.cmdline.GuessedContext;
 import il.org.spartan.spartanizer.research.TipperFactory;
 import il.org.spartan.spartanizer.tipping.Tipper;
 import il.org.spartan.spartanizer.tipping.TipperFailure;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.TextEditGroup;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
+import utils.Wrap;
 
 /**
- * Created by roei on 12/6/16.
+ * @author RoeiRaz
  */
 public class TipperExecute {
 
 
-
     private static Wrap wrapCode(String ¢) {
-        switch(GuessedContext.find(¢)) {
+        switch (GuessedContext.find(¢)) {
             case COMPILATION_UNIT_LOOK_ALIKE:
                 return new Wrap("", "");
-            case  OUTER_TYPE_LOOKALIKE:
+            case OUTER_TYPE_LOOKALIKE:
                 return new Wrap("", "");
             case METHOD_LOOKALIKE:
                 return new Wrap("class X{", "}");
@@ -47,23 +42,24 @@ public class TipperExecute {
         }
     }
 
-    static ASTNode extractStatementIfOne(ASTNode ¢) {
-        return iz.block(¢) && az.block(¢).statements().size() == 1?(ASTNode)az.block(¢).statements().get(0):¢;
+    private static ASTNode extractStatementIfOne(ASTNode ¢) {
+        return iz.block(¢) && az.block(¢).statements().size() == 1 ? (ASTNode) az.block(¢).statements().get(0) : ¢;
     }
 
-    static <N extends ASTNode> N findSecond(final Class<?> c, final ASTNode n) {
+    private static <N extends ASTNode> N findSecond(final Class<?> c, final ASTNode n) {
         if (n == null)
             return null;
         final Wrapper<Boolean> foundFirst = new Wrapper<>();
         foundFirst.set(Boolean.FALSE);
         final Wrapper<ASTNode> $ = new Wrapper<>();
         n.accept(new ASTVisitor() {
-            @Override public boolean preVisit2(final ASTNode ¢) {
+            @Override
+            public boolean preVisit2(final ASTNode ¢) {
                 if ($.get() != null)
                     return false;
                 if (¢.getClass() != c && !c.isAssignableFrom(¢.getClass()))
                     return true;
-                if (foundFirst.get().booleanValue()) {
+                if (foundFirst.get()) {
                     $.set(¢);
                     assert $.get() == ¢;
                     return false;
@@ -76,7 +72,7 @@ public class TipperExecute {
         return $$;
     }
 
-    static ASTNode extractASTNode(final String s, final CompilationUnit u) {
+    private static ASTNode extractASTNode(final String s, final CompilationUnit u) {
         switch (GuessedContext.find(s)) {
             case COMPILATION_UNIT_LOOK_ALIKE:
                 return u;
@@ -99,15 +95,15 @@ public class TipperExecute {
         Document document = new Document(wrapper.wrap(srcSnippet));
         ASTParser parser = ASTParser.newParser(8);
         parser.setSource(document.get().toCharArray());
-        CompilationUnit cu = (CompilationUnit)parser.createAST((IProgressMonitor)null);
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
         AST ast = cu.getAST();
         final ASTRewrite r = ASTRewrite.create(ast);
         ASTNode n = extractStatementIfOne(extractASTNode(srcSnippet, cu));
         n.accept(new ASTVisitor() {
             public void preVisit(ASTNode node) {
-                if(t.canTip(node)) {
+                if (t.canTip(node)) {
                     try {
-                        t.tip(node).go(r, (TextEditGroup)null);
+                        t.tip(node).go(r, null);
                     } catch (TipperFailure var3) {
                         var3.printStackTrace();
                     }
@@ -115,22 +111,24 @@ public class TipperExecute {
 
             }
         });
-        TextEdit edits = r.rewriteAST(document, (Map)null);
+        TextEdit edits = r.rewriteAST(document, null);
 
         try {
             edits.apply(document);
         } catch (BadLocationException | MalformedTreeException var10) {
-            assert(false);
+            assert (false);
         }
         return wrapper.unwrap(document.get());
     }
 
-    @Test public void a() {
+    @Test
+    public void a() {
         Tipper t = TipperFactory.tipper("$X1", "_", "Testing");
         System.out.println(execute(t, "1 + 2 + x"));
     }
 
-    @Test public void b() {
+    @Test
+    public void b() {
         String pattern = "if($X1) {return $X2;} else {return $X3;}";
         String dest = "return $X1?$X2:$X3;";
         Tipper t = TipperFactory.tipper(pattern, dest, "Testing");
